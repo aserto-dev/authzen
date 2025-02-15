@@ -50,6 +50,8 @@
   },
   "gatewayPdps": {
     "Aserto": "http://authzen-gateway-proxy.demo.aserto.com",
-    "Cerbos": "https://authzen-proxy-demo.cerbos.dev"
+    "Axiomatics": "https://pdp.alfa.guide",
+    "Cerbos": "https://authzen-proxy-demo.cerbos.dev",
+    "PlainID": "https://authzeninteropt.se-plainid.com"
   }
 }
