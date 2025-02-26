@@ -21,6 +21,7 @@ var pdps = map[string]string{
 	"Cerbos":               "https://authzen-proxy-demo.cerbos.dev",
 	"PlainID":              "https://authzeninteropt.se-plainid.com",
 	"Rock Solid Knowledge": "https://authzen.identityserver.com",
+	"SGNL":                 "https://authzen.sgnlapis.cloud",
 	"Topaz":                "https://authzen-topaz.demo.aserto.com",
 }
 
@@ -117,6 +118,7 @@ func (server *AuthServer) AuthorizeRequest(ctx context.Context, request *auth_pb
 		log.Printf("Failed to encode payload: %v\n", err)
 		return false, err
 	}
+	log.Printf("PDP: %+v\n", pdpUrl)
 	log.Printf("Payload: %+v\n", authZENPayload)
 
 	// Create HTTP request with context
@@ -126,6 +128,14 @@ func (server *AuthServer) AuthorizeRequest(ctx context.Context, request *auth_pb
 		return false, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+
+	// Add authentication token if configured for this PDP
+	if server.pdpAuthConfigs != nil {
+		if authConfig, exists := server.pdpAuthConfigs[request.Attributes.Request.Http.Headers["x_authzen_gateway_pdp"]]; exists {
+			log.Printf("Adding authorization header to PDP request")
+			req.Header.Set("Authorization", authConfig.Token)
+		}
+	}
 
 	// Send HTTP request with better error handling
 	startTime := time.Now()
